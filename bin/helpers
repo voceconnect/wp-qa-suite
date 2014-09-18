@@ -3,7 +3,6 @@
 ##
 # CONSTANTS
 ##
-readonly PHPCS_DIR="/tmp/phpcs"
 readonly PHPCS_IGNORE='tests/*,vendor/*'
 
 #######################################
@@ -18,7 +17,8 @@ readonly PHPCS_IGNORE='tests/*,vendor/*'
 #######################################
 function execute_php_syntax_check() {
   echo "performing PHP lint checks..."
-  find . -name "*.php" -print0 | xargs -0 -n1 -P4 php -l
+  find . -path ./vendor -prune -o -name "*.php" -print0 \
+    | xargs -0 -n1 -P4 php -l
 }
 
 #######################################
@@ -46,7 +46,6 @@ function execute_phpunit_tests() {
 # phpcs.ruleset.xml file when present
 # any php file in the project
 # Globals:
-#   PHPCS_DIR
 #   PHPCS_IGNORE
 # Arguments:
 #   None
@@ -61,7 +60,7 @@ function execute_wordpress_code_sniffer() {
     local wpcs_standard="WordPress-Core"
   fi
 
-  "${PHPCS_DIR}/scripts/phpcs" \
+  "vendor/bin/phpcs" \
     --standard="${wpcs_standard}" \
     --ignore="${PHPCS_IGNORE}" \
     $(find . -name '*.php')
