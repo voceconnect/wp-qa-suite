@@ -84,22 +84,6 @@ function install_wp_cli() {
 }
 
 #######################################
-# runs composer install --dev
-# Globals:
-#   None
-# Arguments:
-#   None
-# Returns:
-#   Nothing
-#######################################
-function install_composer_dependencies() {
-  if [[ -e "composer.json" ]]; then
-    echo "running 'composer install --dev'..."
-    composer install --dev
-  fi
-}
-
-#######################################
 # clones php-test-helpers and builds
 # Globals:
 #   None
