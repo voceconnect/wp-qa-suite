@@ -15,7 +15,7 @@
         "squizlabs/php_codesniffer": "~1.0"
     },
     "bin": [
-        "bin/helpers.sh",
-        "bin/install.sh"
+        "bin/helpers",
+        "bin/install"
     ]
 }
