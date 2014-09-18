@@ -14,7 +14,6 @@ IFS=$'\n\t'
 ##
 readonly WP_TESTS_DIR="/tmp/wordpress-tests-lib"
 readonly WP_CORE_DIR="/tmp/wordpress"
-readonly PHPCS_DIR="/tmp/phpcs"
 readonly WPCS_DIR="/tmp/wpcs"
 
 #######################################
@@ -96,24 +95,25 @@ function install_test_suite() {
   fi
 
   mkdir -p "${WP_TESTS_DIR}"
-  cd "${WP_TESTS_DIR}"
-  svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+  (
+    cd "${WP_TESTS_DIR}"
+    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
 
-  wget -nv -O wp-tests-config.php \
-    http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
-  sed $ioption "s:dirname( __FILE__ ) . '/src/':'${WP_CORE_DIR}/':" \
-    wp-tests-config.php
-  sed $ioption "s/youremptytestdbnamehere/${DB_NAME}/" wp-tests-config.php
-  sed $ioption "s/yourusernamehere/${DB_USER}/" wp-tests-config.php
-  sed $ioption "s/yourpasswordhere/${DB_PASS}/" wp-tests-config.php
-  sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+    wget -nv -O wp-tests-config.php \
+      http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
+    sed $ioption "s:dirname( __FILE__ ) . '/src/':'${WP_CORE_DIR}/':" \
+      wp-tests-config.php
+    sed $ioption "s/youremptytestdbnamehere/${DB_NAME}/" wp-tests-config.php
+    sed $ioption "s/yourusernamehere/${DB_USER}/" wp-tests-config.php
+    sed $ioption "s/yourpasswordhere/${DB_PASS}/" wp-tests-config.php
+    sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+  )
 }
 
 #######################################
 # download and extract WP coding
 # standards, add to phpcs installed paths
 # Globals:
-#   PHPCS_DIR
 #   WPCS_DIR
 # Arguments:
 #   None
