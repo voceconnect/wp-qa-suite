@@ -1,20 +1,14 @@
-#!/bin/bash
-
-#######################################
-# setup test environment to run PHP
-# unit tests with required wordpress
-# testing libraries and configs
-#######################################
-
+#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
 
 ##
 # CONSTANTS
 ##
+readonly PROJECT_ROOT="${PWD}"
+readonly WPQA_SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 readonly WP_TESTS_DIR="/tmp/wordpress-tests-lib"
 readonly WP_CORE_DIR="/tmp/wordpress"
-readonly WPCS_DIR="/tmp/wpcs"
 
 #######################################
 # validates and sets constants based
@@ -111,26 +105,6 @@ function install_test_suite() {
 }
 
 #######################################
-# download and extract WP coding
-# standards, add to phpcs installed paths
-# Globals:
-#   WPCS_DIR
-# Arguments:
-#   None
-# Returns:
-#   Nothing
-#######################################
-function install_wordpress_coding_standards() {
-  mkdir -p "${WPCS_DIR}"
-
-  wget -nv -O "/tmp/wpcs.tar.gz" \
-    "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/master.tar.gz"
-  tar --strip-components=1 -zxmf "/tmp/wpcs.tar.gz" -C "${WPCS_DIR}"
-
-  "vendor/bin/phpcs" --config-set installed_paths "${WPCS_DIR}"
-}
-
-#######################################
 # creates DB_NAME database for tests
 # Globals:
 #   DB_NAME
@@ -153,13 +127,38 @@ function setup_database() {
     --host="${DB_HOST}"
 }
 
+#######################################
+# executes phpunit tests only when a
+# phpunit.xml file is present
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   Nothing
+#######################################
+function execute_phpunit_tests() {
+  echo "executing PHP unit tests..."
+  phpunit --configuration phpunit.xml
+}
+
+#######################################
+# setup test environment to run PHP
+# unit tests with required wordpress
+# testing libraries and configs
+#######################################
 function main() {
   check_arguments "$@"
 
-  install_wordpress
-  install_test_suite
-  install_wordpress_coding_standards
-  setup_database
+  if [[ -e "phpunit.xml" ]]; then
+    install_wordpress
+    install_test_suite
+    setup_database
+    execute_phpunit_tests
+  else
+    echo "missing phpunit.xml file, exiting..."
+    exit 1
+  fi
 }
 
 main "$@"

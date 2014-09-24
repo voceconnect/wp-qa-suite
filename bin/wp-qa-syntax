@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+##
+# CONSTANTS
+##
+readonly PROJECT_ROOT="${PWD}"
+readonly WPQA_SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+#######################################
+# executes php syntax check against
+# any php file in the project
+#######################################
+function main() {
+  echo "performing PHP syntax checks..."
+  git ls-tree -r --name-only HEAD . \
+    | grep "\.php$" \
+    | xargs -I{} -P4 \
+      php -n -l \
+        -d'display_errors=1' \
+        -d'error_reporting=E_ALL' \
+        -d'log_errrors=0' '{}' \;
+}
+
+main "$@"
