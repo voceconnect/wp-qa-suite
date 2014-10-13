@@ -33,6 +33,28 @@ The `wp-qa-suite` provides a consistent way for projects to include continuous i
 
 2) Execute `composer install --dev`
 
+### Scripts
+
+#### bin/wp-qa-codesniff
+
+Reads a `phpcs.ruleset.xml` from the root of the project and executes `phpcs` against only PHP files in the project using `git ls-tree`. [WordPress-Coding-Standards/WordPress-Coding-Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards) are installed and added to the `installed_paths` configuration of `phpcs`. 
+
+#### bin/wp-qa-phpunit
+
+Installs the latest or a specific version of WordPress, the [WordPress test suite](http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/), sets up the database, and executes `phpunit --configuration phpunit.xml`. Settings are read from a `phpunit.xml` stored in the project root. 
+
+**Arguments**:
+
+* `wp_version` - (required) the version of WordPress to test against, `3.9.2`, `3.8.4`, etc. or `latest`. 
+* `DB_USER` - (optional, default: travis) the username to use when connecting to MySQL
+* `DB_PASS` - (optional, default: _none_) the password for the `DB_USER` to use when connecting to MySQL
+* `DB_NAME` - (optional, default: wp_test) the MySQL database name to use for tests
+* `DB_HOST` - (optional, default: localhost) the host running the MySQL instance to connect to
+
+#### bin/wp-qa-syntax
+
+Executes syntax checks against all PHP files in the project. Since `git ls-tree` is used, the script will only scan over files included in the project and not dependencies installed via Composer.
+
 ### Integrating with Travis CI
 
 An example `.travis.yml` file:
